@@ -33,55 +33,64 @@ in {
     # https://gitlab.freedesktop.org/xdg/xdg-user-dirs/blob/master/man/user-dirs.dirs.xml
 
     desktop = mkOption {
-      type = types.str;
+      type = types.path;
       default = "$HOME/Desktop";
+      apply = toString;
       description = "The Desktop directory.";
     };
 
     documents = mkOption {
-      type = types.str;
+      type = types.path;
       default = "$HOME/Documents";
+      apply = toString;
       description = "The Documents directory.";
     };
 
     download = mkOption {
-      type = types.str;
+      type = types.path;
       default = "$HOME/Downloads";
+      apply = toString;
       description = "The Downloads directory.";
     };
 
     music = mkOption {
-      type = types.str;
+      type = types.path;
       default = "$HOME/Music";
+      apply = toString;
       description = "The Music directory.";
     };
 
     pictures = mkOption {
-      type = types.str;
+      type = types.path;
       default = "$HOME/Pictures";
+      apply = toString;
       description = "The Pictures directory.";
     };
 
     publicShare = mkOption {
-      type = types.str;
+      type = types.path;
       default = "$HOME/Public";
+      apply = toString;
       description = "The Public share directory.";
     };
 
     templates = mkOption {
-      type = types.str;
+      type = types.path;
       default = "$HOME/Templates";
+      apply = toString;
       description = "The Templates directory.";
     };
 
     videos = mkOption {
-      type = types.str;
+      type = types.path;
       default = "$HOME/Videos";
+      apply = toString;
       description = "The Videos directory.";
     };
 
     extraConfig = mkOption {
-      type = with types; attrsOf str;
+      type = with types; attrsOf path;
+      apply = builtins.mapAttrs (key: value: toString value);
       default = { };
       example = { XDG_MISC_DIR = "$HOME/Misc"; };
       description = "Other user directories.";
@@ -113,6 +122,7 @@ in {
 
     xdg.configFile."user-dirs.conf".text = "enabled=False";
 
+    home.sessionVariables = directories;
     home.activation = mkIf cfg.createDirectories {
       createXdgUserDirectories = let
         directoriesList = attrValues directories;
